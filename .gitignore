@@ -1,0 +1,14 @@
+*/*/node_modules
+*/*/target
+**/.vscode
+*/*/.settings
+**/.mvn
+*/*/.classpath
+*/*/.project
+*/*/frontend/generated/
+*/*/pnpmfile.js
+*/*/webpack.generated.js
+*/*/error-screenshots/
+*.iml
+**/.DS_Store
+**/drivers
