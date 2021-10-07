@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.ruff.fastsearch</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0-Snapshot</version>
+	</parent>
+	<artifactId>vaadin-fusion-fastsearch</artifactId>
+
+	<properties>
+		<vaadin.version>22.0.0.alpha6</vaadin.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-bom</artifactId>
+				<version>${vaadin.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.ruff.fastsearch</groupId>
+			<artifactId>fastsearch-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ruff.fastsearch</groupId>
+			<artifactId>vaadin-fastsearch</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-core</artifactId>
+		</dependency>
+	</dependencies>
+</project>
