@@ -13,3 +13,8 @@
 **/.DS_Store
 **/drivers
 **/.prettierrc.js
+fastsearch.code-workspace
+fastsearch/vaadin-flow-fastsearch/package-lock.json
+vaadin14-demo/package-lock.json
+vaadin14-demo/pnpm-lock.yaml
+vaadin14-demo/package-lock.json
