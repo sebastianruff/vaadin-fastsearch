@@ -1,4 +1,4 @@
-package org.ruff.vaadin.fastsearch;
+package org.ruff.fastsearch;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClientCallable;
@@ -7,10 +7,6 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.littemplate.LitTemplate;
-
-import org.ruff.fastsearch.Candidate;
-import org.ruff.fastsearch.PrefixConnector;
-import org.ruff.fastsearch.SearchConnector;
 
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;

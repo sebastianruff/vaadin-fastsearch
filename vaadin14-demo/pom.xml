@@ -10,7 +10,7 @@
 
     <properties>
         <java.version>8</java.version>
-        <vaadin.version>14.7.1</vaadin.version>
+        <vaadin.version>14.7.4</vaadin.version>
     </properties>
 
     <parent>
@@ -169,7 +169,7 @@
         </dependency>
         <dependency>
             <groupId>org.ruff.fastsearch</groupId>
-            <artifactId>vaadin-flow-fastsearch</artifactId>
+            <artifactId>vaadin-fastsearch</artifactId>
             <version>1.0.0-Snapshot</version>
         </dependency>
     </dependencies>

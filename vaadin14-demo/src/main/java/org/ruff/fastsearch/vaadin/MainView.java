@@ -3,7 +3,7 @@ package org.ruff.fastsearch.vaadin;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
-import org.ruff.vaadin.fastsearch.Fastsearch;
+import org.ruff.fastsearch.Fastsearch;
 
 /**
  * The main view contains a button and a click listener.
