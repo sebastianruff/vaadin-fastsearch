@@ -2,7 +2,8 @@ package org.ruff.fastsearch;
 
 public interface PrefixConnector {
 
-	public String getPrefix();
+    String getPrefix();
 
-	public void match(String match);
+    void match(String match);
+
 }

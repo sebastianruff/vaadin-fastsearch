@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <!-- Vaadin project from https://start.vaadin.com/project/db41b36b-7a48-495e-b3d4-20cd428ce563 -->
     <groupId>org.ruff.fastsearch</groupId>
@@ -10,7 +11,8 @@
 
     <properties>
         <java.version>8</java.version>
-        <vaadin.version>14.7.4</vaadin.version>
+        <vaadin.version>14.8.14</vaadin.version>
+        <flow.version>2.7.17</flow.version> 
     </properties>
 
     <parent>

@@ -4,9 +4,9 @@ import java.util.stream.Stream;
 
 public interface SearchConnector {
 
-	public Stream<Candidate> getCandidateSupplier();
+    Stream<Candidate> getCandidateSupplier();
 
-	public void match(Candidate match);
+    void match(Candidate match);
 
-	public String getIndexName();
+    String getIndexName();
 }
