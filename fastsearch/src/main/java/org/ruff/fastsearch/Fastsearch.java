@@ -1,5 +1,7 @@
 package org.ruff.fastsearch;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -29,7 +31,7 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
         private SearchConnector connector;
         private transient JreJsonFactory jsonFactory;
 
-        private PrefixConnector keywordConnector;
+        private List<PrefixConnector> prefixConnectors = new ArrayList<>();
 
         private Optional<Candidate> match;
 
@@ -56,9 +58,10 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
 
         @ClientCallable
         private void prefixMatch(String term) {
-                if (term.startsWith(keywordConnector.getPrefix())) {
-                        keywordConnector.match(term.replaceFirst(keywordConnector.getPrefix(), ""));
-                }
+                prefixConnectors.stream().filter(prefixConnector -> term.startsWith(prefixConnector.getPrefix()))
+                                .findFirst().ifPresent(prefixConnector -> {
+                                        prefixConnector.match(term.replaceFirst(prefixConnector.getPrefix(), ""));
+                                });
         }
 
         @ClientCallable
@@ -83,8 +86,12 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
                 getElement().setPropertyJson("$candidates", array);
         }
 
-        public void addPrefixConnector(PrefixConnector c) {
-                this.keywordConnector = c;
-                getElement().setProperty("$keyword", c.getPrefix());
+        public void addPrefixConnector(PrefixConnector prefixConnector) {
+                prefixConnectors.add(prefixConnector);
+                JsonArray array = jsonFactory.createArray();
+                prefixConnectors.forEach(c -> {
+                        array.set(array.length(), c.getPrefix());
+                });
+                getElement().setPropertyJson("$prefixes", array);
         }
 }

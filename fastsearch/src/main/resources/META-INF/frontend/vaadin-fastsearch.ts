@@ -16,8 +16,8 @@ export class Fastsearch extends LitElement {
 	@property({ type: Array })
 	$results: Array<Candidate> = [];
 
-	@property({ attribute: false })
-	$keyword?: string;
+	@property({ type: Array })
+	$prefixes: Array<string> = [];
 
 	@property({ type: String })
 	$keywordFormatted: string = "";
@@ -75,8 +75,9 @@ export class Fastsearch extends LitElement {
 	}
 
 	isPrefixAction(term: string) {
-		if (this.$keyword !== null && term.startsWith(this.$keyword!)) {
-			this.$keywordFormatted = this.$keyword + term;
+		let prefixMatch = this.$prefixes.find(value => term.startsWith(value));
+		if (prefixMatch != null) {
+			this.$keywordFormatted = prefixMatch + term;
 			return true;
 		}
 		return false;
@@ -92,7 +93,7 @@ export class Fastsearch extends LitElement {
 					console.debug("Result: " + candidate?.id + " - " + candidate?.content);
 					this.$results.indexOf(candidate) === -1 ? this.$results.push(candidate) : console.debug("Candidate " + candidate + " already found.");
 				}
-			})
+			});
 		});
 	}
 }

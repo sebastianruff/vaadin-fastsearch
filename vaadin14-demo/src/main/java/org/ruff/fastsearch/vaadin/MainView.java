@@ -19,7 +19,8 @@ public class MainView extends VerticalLayout {
 
 		fastsearch.addClientCachedSearchConnector(new SearchConnectorImplementation());
 
-		fastsearch.addPrefixConnector(new PrefixConnectorImplementation());
+		fastsearch.addPrefixConnector(new PrefixConnectorImplementation("v"));
+		fastsearch.addPrefixConnector(new PrefixConnectorImplementation("a"));
 
 		fastsearch.setFallbackEnterConnector(value -> System.out.println("Fallback Connector: " + value));
 	}
