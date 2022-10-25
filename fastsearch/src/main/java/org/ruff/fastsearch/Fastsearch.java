@@ -55,14 +55,15 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
         }
 
         @ClientCallable
-        private void enter(String id, String term) {
-                if ("".equals(id)) {
-                        if (term.startsWith(keywordConnector.getPrefix())) {
-                                keywordConnector.match(term.replaceFirst(keywordConnector.getPrefix(), ""));
-                        } else {
-                                fallbackEnterConnector.accept(term);
-                        }
+        private void prefixMatch(String term) {
+                if (term.startsWith(keywordConnector.getPrefix())) {
+                        keywordConnector.match(term.replaceFirst(keywordConnector.getPrefix(), ""));
                 }
+        }
+
+        @ClientCallable
+        private void enter(String term) {
+                fallbackEnterConnector.accept(term);
         }
 
         public void setFallbackEnterConnector(Consumer<String> fallbackEnterConnector) {

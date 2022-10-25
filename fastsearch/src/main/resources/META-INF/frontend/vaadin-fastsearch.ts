@@ -33,8 +33,7 @@ export class Fastsearch extends LitElement {
 			index: ["content"],
 			tag: "tag",
 		},
-		tokenize: 'full',
-		encode: 
+		tokenize: 'full'
 	});
 
 	updated(changedProperties: any) {
@@ -61,14 +60,16 @@ export class Fastsearch extends LitElement {
 `}
 
 	keyup(e: KeyboardEvent) {
-		const term = (<TextFieldElement>e.currentTarget).value;
+		const term: string = (<TextFieldElement>e.currentTarget).value;
 		console.debug("Typing: " + term);
 		this.search(term)
 		if (e.key === 'Enter') {
 			if (this.isPrefixAction(term)) {
-				this.$server?.enter("", term);
+				this.$server?.prefixMatch(term);
 			} else if (this.$results.length > 0) {
 				this.$server?.clientMatch(this.$results[0].id);
+			} else if (term.length > 0) {
+				this.$server?.enter(term);
 			}
 		}
 	}
@@ -103,6 +104,7 @@ export interface Candidate {
 }
 
 interface FastsearchServerInterface {
+	enter(term: string): void;
+	prefixMatch(term: string): void;
 	clientMatch(id: string): void;
-	enter(id: string, term: string): void;
 }
