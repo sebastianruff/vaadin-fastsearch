@@ -33,7 +33,8 @@ export class Fastsearch extends LitElement {
 			index: ["content"],
 			tag: "tag",
 		},
-		tokenize: 'full'
+		tokenize: 'full',
+		encode: 
 	});
 
 	updated(changedProperties: any) {
