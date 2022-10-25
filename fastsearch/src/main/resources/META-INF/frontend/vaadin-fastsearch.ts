@@ -50,12 +50,12 @@ export class Fastsearch extends LitElement {
 			<div> 	
 			<p>${this.$keywordFormatted}</p>
 		</div>
-		<div> 		
+		<vaadin-fastsearch-results id="resultOverlay" opened="{{opened}}" theme$="[[theme]]"> 		
 		${repeat(this.$results, (result) => result.id, (result) => html`
 			<p>${result.content}</p>
 			${console.debug("Result rendered: " + result.content)}
-    `)}
-		</div>
+    `)}	
+		</vaadin-fastsearch-results>
 
 `}
 
