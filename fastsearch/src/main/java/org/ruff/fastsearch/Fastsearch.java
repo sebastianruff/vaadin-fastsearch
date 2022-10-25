@@ -1,5 +1,7 @@
 package org.ruff.fastsearch;
 
+import java.util.Optional;
+
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Tag;
@@ -26,7 +28,7 @@ public class Fastsearch extends LitTemplate {
 
 	private PrefixConnector keywordConnector;
 
-	private Candidate match;
+	private Optional<Candidate> match;
 
 	public Fastsearch() {
 		jsonFactory = new JreJsonFactory();
@@ -39,9 +41,9 @@ public class Fastsearch extends LitTemplate {
 
 	@ClientCallable
 	private void clientMatch(String id) {
-		match = connector.getCandidateSupplier().filter(c -> c.getId().equals(id)).findFirst().get();
-		if (match != null) {
-			connector.match(match);
+		match = connector.getCandidateSupplier().filter(c -> c.getId().toString().equals(id)).findFirst();
+		if (match.isPresent()) {
+			connector.match(match.get());
 		}
 	}
 
