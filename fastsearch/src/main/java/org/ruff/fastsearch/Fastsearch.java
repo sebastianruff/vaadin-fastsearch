@@ -50,7 +50,7 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
                                 c -> c.getId() != null ? c.getId().equals(id) : id == String.valueOf(c.hashCode()))
                                 .findFirst();
                 if (match.isPresent()) {
-                        connector.match(match);
+                        connector.match(match.get());
                 }
         }
 
