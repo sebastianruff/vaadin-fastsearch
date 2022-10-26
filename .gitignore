@@ -18,3 +18,11 @@ fastsearch/vaadin-flow-fastsearch/package-lock.json
 vaadin14-demo/package-lock.json
 vaadin14-demo/pnpm-lock.yaml
 vaadin14-demo/package-lock.json
+fastsearch/src/main/resources/rebel.xml
+vaadin14-demo/src/main/resources/rebel.xml
+package.json
+package-lock.json
+pnpm-lock.yaml
+fastsearch/tsconfig.json
+fastsearch/src/main/java/META-INF/MANIFEST.MF
+vaadin14-demo/tsconfig.json

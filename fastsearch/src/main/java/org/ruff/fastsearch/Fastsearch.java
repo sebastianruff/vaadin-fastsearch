@@ -1,5 +1,8 @@
 package org.ruff.fastsearch;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.vaadin.flow.component.AttachEvent;
@@ -28,9 +31,9 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
         private SearchConnector connector;
         private transient JreJsonFactory jsonFactory;
 
-        private PrefixConnector keywordConnector;
+        private List<PrefixConnector> prefixConnectors = new ArrayList<>();
 
-        private Candidate match;
+        private Optional<Candidate> match;
 
         private Consumer<String> fallbackEnterConnector;
 
@@ -47,21 +50,23 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
         private void clientMatch(String id) {
                 match = connector.getCandidateSupplier().filter(
                                 c -> c.getId() != null ? c.getId().equals(id) : id == String.valueOf(c.hashCode()))
-                                .findFirst().get();
-                if (match != null) {
-                        connector.match(match);
+                                .findFirst();
+                if (match.isPresent()) {
+                        connector.match(match.get());
                 }
         }
 
         @ClientCallable
-        private void enter(String id, String term) {
-                if ("".equals(id)) {
-                        if (term.startsWith(keywordConnector.getPrefix())) {
-                                keywordConnector.match(term.replaceFirst(keywordConnector.getPrefix(), ""));
-                        } else {
-                                fallbackEnterConnector.accept(term);
-                        }
-                }
+        private void prefixMatch(String term) {
+                prefixConnectors.stream().filter(prefixConnector -> term.startsWith(prefixConnector.getPrefix()))
+                                .findFirst().ifPresent(prefixConnector -> {
+                                        prefixConnector.match(term.replaceFirst(prefixConnector.getPrefix(), ""));
+                                });
+        }
+
+        @ClientCallable
+        private void enter(String term) {
+                fallbackEnterConnector.accept(term);
         }
 
         public void setFallbackEnterConnector(Consumer<String> fallbackEnterConnector) {
@@ -81,8 +86,12 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
                 getElement().setPropertyJson("$candidates", array);
         }
 
-        public void addPrefixConnector(PrefixConnector c) {
-                this.keywordConnector = c;
-                getElement().setProperty("$keyword", c.getPrefix());
+        public void addPrefixConnector(PrefixConnector prefixConnector) {
+                prefixConnectors.add(prefixConnector);
+                JsonArray array = jsonFactory.createArray();
+                prefixConnectors.forEach(c -> {
+                        array.set(array.length(), c.getPrefix());
+                });
+                getElement().setPropertyJson("$prefixes", array);
         }
 }

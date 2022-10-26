@@ -16,8 +16,8 @@ export class Fastsearch extends LitElement {
 	@property({ type: Array })
 	$results: Array<Candidate> = [];
 
-	@property({ attribute: false })
-	$keyword?: string;
+	@property({ type: Array })
+	$prefixes: Array<string> = [];
 
 	@property({ type: String })
 	$keywordFormatted: string = "";
@@ -50,31 +50,34 @@ export class Fastsearch extends LitElement {
 			<div> 	
 			<p>${this.$keywordFormatted}</p>
 		</div>
-		<div> 		
+		<vaadin-fastsearch-results id="resultOverlay" opened="{{opened}}" theme$="[[theme]]"> 		
 		${repeat(this.$results, (result) => result.id, (result) => html`
 			<p>${result.content}</p>
 			${console.debug("Result rendered: " + result.content)}
-    `)}
-		</div>
+    `)}	
+		</vaadin-fastsearch-results>
 
 `}
 
 	keyup(e: KeyboardEvent) {
-		const term = (<TextFieldElement>e.currentTarget).value;
+		const term: string = (<TextFieldElement>e.currentTarget).value;
 		console.debug("Typing: " + term);
 		this.search(term)
 		if (e.key === 'Enter') {
 			if (this.isPrefixAction(term)) {
-				this.$server?.enter("", term);
+				this.$server?.prefixMatch(term);
 			} else if (this.$results.length > 0) {
 				this.$server?.clientMatch(this.$results[0].id);
+			} else if (term.length > 0) {
+				this.$server?.enter(term);
 			}
 		}
 	}
 
 	isPrefixAction(term: string) {
-		if (this.$keyword !== null && term.startsWith(this.$keyword!)) {
-			this.$keywordFormatted = this.$keyword + term;
+		let prefixMatch = this.$prefixes.find(value => term.startsWith(value));
+		if (prefixMatch != null) {
+			this.$keywordFormatted = prefixMatch + term;
 			return true;
 		}
 		return false;
@@ -90,7 +93,7 @@ export class Fastsearch extends LitElement {
 					console.debug("Result: " + candidate?.id + " - " + candidate?.content);
 					this.$results.indexOf(candidate) === -1 ? this.$results.push(candidate) : console.debug("Candidate " + candidate + " already found.");
 				}
-			})
+			});
 		});
 	}
 }
@@ -102,6 +105,7 @@ export interface Candidate {
 }
 
 interface FastsearchServerInterface {
+	enter(term: string): void;
+	prefixMatch(term: string): void;
 	clientMatch(id: string): void;
-	enter(id: string, term: string): void;
 }
