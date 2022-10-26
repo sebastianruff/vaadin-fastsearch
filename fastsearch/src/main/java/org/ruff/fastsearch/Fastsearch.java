@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Focusable;
@@ -25,6 +28,8 @@ import elemental.json.impl.JreJsonFactory;
 @CssImport("./vaadin-fastsearch.css")
 @NpmPackage(value = "flexsearch", version = "0.7.31")
 public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastsearch> {
+
+        private static final Log LOG = LogFactory.getLog(Fastsearch.class);
 
         private static final long serialVersionUID = 2088300391648592896L;
 
@@ -76,12 +81,23 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
         public void addClientCachedSearchConnector(SearchConnector connector) {
                 this.connector = connector;
                 JsonArray array = jsonFactory.createArray();
+                if (LOG.isDebugEnabled()) {
+                        LOG.debug("SearchConnector Entries: ");
+                }
                 connector.getCandidateSupplier().forEach(c -> {
                         JsonObject object = jsonFactory.createObject();
-                        object.put(Candidate.ID, c.getId() != null ? c.getId() : c.hashCode());
+                        String id = c.getId() != null ? c.getId() : String.valueOf(c.hashCode());
+                        object.put(Candidate.ID, id);
                         object.put(Candidate.CONTENT, c.getContent());
-                        object.put(Candidate.TAG, connector.getIndexName());
+                        if (connector.getIndexName() != null) {
+                                object.put(Candidate.TAG, connector.getIndexName());
+                        }
                         array.set(array.length(), object);
+                        if (LOG.isDebugEnabled()) {
+                                LOG.debug(Candidate.ID + ": " + id + " " + Candidate.CONTENT + ": " + c.getContent()
+                                                + " " + Candidate.TAG
+                                                + ": " + connector.getIndexName());
+                        }
                 });
                 getElement().setPropertyJson("$candidates", array);
         }
