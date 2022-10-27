@@ -19,6 +19,9 @@ export class Fastsearch extends LitElement {
 	@property({ type: Array })
 	$prefixes: Array<string> = [];
 
+	@property({ type: Array })
+	$regexes: Array<string> = [];
+
 	@property({ type: String })
 	$keywordFormatted: string = "";
 
@@ -66,6 +69,8 @@ export class Fastsearch extends LitElement {
 		if (e.key === 'Enter') {
 			if (this.isPrefixAction(term)) {
 				this.$server?.prefixMatch(term);
+			} else if (this.isRegexAction(term)) {
+				this.$server?.regexMatch(term);
 			} else if (this.$results.length > 0) {
 				this.$server?.clientMatch(this.$results[0].id);
 			} else if (term.length > 0) {
@@ -73,9 +78,17 @@ export class Fastsearch extends LitElement {
 			}
 		}
 	}
+	isRegexAction(term: string) {
+		let regexMatch = this.$regexes.find(pattern => term.match(pattern));
+		if (regexMatch != null) {
+			this.$keywordFormatted = "Suche nach " + term;
+			return true;
+		}
+		return false;
+	}
 
 	isPrefixAction(term: string) {
-		let prefixMatch = this.$prefixes.find(value => term.startsWith(value));
+		let prefixMatch = this.$prefixes.find(prefix => term.startsWith(prefix));
 		if (prefixMatch != null) {
 			this.$keywordFormatted = prefixMatch + term;
 			return true;
@@ -107,5 +120,6 @@ export interface Candidate {
 interface FastsearchServerInterface {
 	enter(term: string): void;
 	prefixMatch(term: string): void;
+	regexMatch(term: string): void;
 	clientMatch(id: string): void;
 }

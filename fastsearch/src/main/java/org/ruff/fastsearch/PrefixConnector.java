@@ -1,9 +1,9 @@
 package org.ruff.fastsearch;
 
-public interface PrefixConnector {
+public interface PrefixConnector extends Connector {
 
-    String getPrefix();
+        String getPrefix();
 
-    void match(String match);
+        void match(String query);
 
 }

@@ -2,11 +2,11 @@ package org.ruff.fastsearch;
 
 import java.util.stream.Stream;
 
-public interface SearchConnector {
+public interface SearchConnector extends Connector {
 
-    Stream<Candidate> getCandidateSupplier();
+        Stream<Candidate> getCandidateSupplier();
 
-    void match(Candidate match);
+        void match(Candidate match);
 
-    String getIndexName();
+        String getIndexName();
 }

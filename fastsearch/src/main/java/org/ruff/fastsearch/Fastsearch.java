@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -33,14 +34,14 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
 
         private static final long serialVersionUID = 2088300391648592896L;
 
-        private SearchConnector connector;
+        private SearchConnector searchConnector;
+        private Consumer<String> fallbackEnterConnector;
+        private List<PrefixConnector> prefixConnectors = new ArrayList<>();
+        private List<RegexConnector> regexConnectors = new ArrayList<>();
+
         private transient JreJsonFactory jsonFactory;
 
-        private List<PrefixConnector> prefixConnectors = new ArrayList<>();
-
         private Optional<Candidate> match;
-
-        private Consumer<String> fallbackEnterConnector;
 
         public Fastsearch() {
                 jsonFactory = new JreJsonFactory();
@@ -53,11 +54,11 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
 
         @ClientCallable
         private void clientMatch(String id) {
-                match = connector.getCandidateSupplier().filter(
+                match = searchConnector.getCandidateSupplier().filter(
                                 c -> c.getId() != null ? c.getId().equals(id) : id == String.valueOf(c.hashCode()))
                                 .findFirst();
                 if (match.isPresent()) {
-                        connector.match(match.get());
+                        searchConnector.match(match.get());
                 }
         }
 
@@ -70,6 +71,22 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
         }
 
         @ClientCallable
+        private void regexMatch(String term) {
+                regexConnectors.stream().filter(regexConnector -> term.matches(regexConnector.getRegEx()))
+                                .findFirst().ifPresent(regexConnector -> {
+                                        String termForMatching = term;
+                                        if (regexConnector.ignoreSpaces()) {
+                                                termForMatching = termForMatching.replaceAll("\\s", "");
+                                        }
+                                        for (String charToIgnore : regexConnector.ignoreCharsForMatching()) {
+                                                termForMatching = StringUtils
+                                                                .remove(termForMatching, charToIgnore);
+                                        }
+                                        regexConnector.match(termForMatching.toString());
+                                });
+        }
+
+        @ClientCallable
         private void enter(String term) {
                 fallbackEnterConnector.accept(term);
         }
@@ -78,25 +95,25 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
                 this.fallbackEnterConnector = fallbackEnterConnector;
         }
 
-        public void addClientCachedSearchConnector(SearchConnector connector) {
-                this.connector = connector;
+        public void addClientCachedSearchConnector(SearchConnector searchConnector) {
+                this.searchConnector = searchConnector;
                 JsonArray array = jsonFactory.createArray();
                 if (LOG.isDebugEnabled()) {
                         LOG.debug("SearchConnector Entries: ");
                 }
-                connector.getCandidateSupplier().forEach(c -> {
+                searchConnector.getCandidateSupplier().forEach(c -> {
                         JsonObject object = jsonFactory.createObject();
                         String id = c.getId() != null ? c.getId() : String.valueOf(c.hashCode());
                         object.put(Candidate.ID, id);
                         object.put(Candidate.CONTENT, c.getContent());
-                        if (connector.getIndexName() != null) {
-                                object.put(Candidate.TAG, connector.getIndexName());
+                        if (searchConnector.getIndexName() != null) {
+                                object.put(Candidate.TAG, searchConnector.getIndexName());
                         }
                         array.set(array.length(), object);
                         if (LOG.isDebugEnabled()) {
                                 LOG.debug(Candidate.ID + ": " + id + " " + Candidate.CONTENT + ": " + c.getContent()
                                                 + " " + Candidate.TAG
-                                                + ": " + connector.getIndexName());
+                                                + ": " + searchConnector.getIndexName());
                         }
                 });
                 getElement().setPropertyJson("$candidates", array);
@@ -110,4 +127,24 @@ public class Fastsearch extends LitTemplate implements HasSize, Focusable<Fastse
                 });
                 getElement().setPropertyJson("$prefixes", array);
         }
+
+        public void addRegexConnectorConnector(RegexConnector regexConnector) {
+                regexConnectors.add(regexConnector);
+                JsonArray array = jsonFactory.createArray();
+                regexConnectors.forEach(c -> {
+                        array.set(array.length(), c.getRegEx());
+                });
+                getElement().setPropertyJson("$regexes", array);
+        }
+
+        public void addConnector(Connector connector) {
+                if (connector instanceof SearchConnector) {
+                        addClientCachedSearchConnector((SearchConnector) connector);
+                } else if (connector instanceof PrefixConnector) {
+                        addPrefixConnector((PrefixConnector) connector);
+                } else if (connector instanceof RegexConnector) {
+                        addRegexConnectorConnector((RegexConnector) connector);
+                }
+        }
+
 }
