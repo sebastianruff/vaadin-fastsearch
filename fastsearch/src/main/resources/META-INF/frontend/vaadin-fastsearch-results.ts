@@ -1,7 +1,8 @@
-import { customElement, html, LitElement, property } from 'lit-element';
-import { Candidate } from './vaadin-fastsearch';
+import { customElement, html, property } from 'lit-element';
+import { Candidate } from "./candidate";
 import { repeat } from 'lit-html/directives/repeat';
-import { OverlayElement } from '@vaadin/vaadin-overlay/src/vaadin-overlay';
+import '@vaadin/vaadin-overlay';
+import { OverlayElement } from '@vaadin/vaadin-overlay';
 import { registerStyles, css } from '@vaadin/vaadin-themable-mixin/register-styles.js';
 
 registerStyles(
@@ -33,8 +34,11 @@ export class FastsearchResults extends OverlayElement {
 
   render() {
     return html`
-    ${repeat(this.$results, (result) => result.id, (result) => html`
-  <div>${result.content}</div>
-    `)}
+            <vaadin-fastsearch-results id="result-overlay" opened="{{opened}}" theme$="[[theme]]">
+              ${repeat(this.$results, (result: any) => result.id, (result: any) => html`
+              <p>${result.content}</p>
+              ${console.debug("FastsearchResults rendered: " + result.content)}
+              `)}
+            </vaadin-fastsearch-results>
 `}
 }

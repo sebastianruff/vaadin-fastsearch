@@ -7,16 +7,16 @@ public class PrefixConnectorImplementation implements PrefixConnector {
     private String prefix;
 
     public PrefixConnectorImplementation(String prefix) {
-        this.prefix = prefix;
+	this.prefix = prefix;
     }
 
     @Override
     public String getPrefix() {
-        return prefix;
+	return prefix;
     }
 
     @Override
     public void match(String match) {
-        System.out.println("PrefixMatch for " + prefix + ": " + match);
+	System.out.println("PrefixMatch for " + prefix + ": " + match);
     }
 }
